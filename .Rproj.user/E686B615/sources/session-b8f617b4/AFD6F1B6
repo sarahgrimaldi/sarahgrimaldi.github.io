@@ -3,16 +3,16 @@
     "path": "C:/Users/sarah/OneDrive/Desktop/sarahgrimaldi.github.io/index.qmd",
     "project_path": "index.qmd",
     "type": "quarto_markdown",
-    "hash": "2350516812",
+    "hash": "0",
     "contents": "",
-    "dirty": false,
+    "dirty": true,
     "created": 1702335505899.0,
     "source_on_save": false,
     "relative_order": 1,
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "3,33",
+        "cursorPosition": "1,22",
         "scrollLine": "0",
         "rmdVisualMode": "false",
         "rmdVisualCollapsedChunks": "",
@@ -23,7 +23,7 @@
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1702336711812,
+    "last_content_update": 1702337707467,
     "read_only": false,
     "read_only_alternatives": []
 }
