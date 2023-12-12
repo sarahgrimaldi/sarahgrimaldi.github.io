@@ -1,41 +1,41 @@
 ---
-title: "YOUR NAME" 
+title: "Sarah Grimaldi" 
 about:
   template: trestles  # jolla  trestles  solana  marquee  broadside
-  image: img/profile.png
+  image: img/Screenshot 2023-12-11 202333.png
   image-width: 16em
-  image-shape: round # rectangle  round  rounded
+  # image-shape: round # rectangle  round  rounded
   
   links:
     - icon: linkedin
       text: LinkedIn
-      href: https://linkedin.com
-    - icon: instagram
-      text: Instagram
-      href: https://instagram.com
+      href: https://www.linkedin.com/in/sarah-grimaldi-394a98298/
     - icon: github
       text: GitHub
-      href: https://github.com
+      href: https://github.com/sarahgrimaldi 
     - icon: file-earmark-pdf
       text: Resumé
-      href: https://GITHUB_USERNAME.github.io/resume-example.pdf
+      href: file:///C:/Users/sarah/Downloads/Resume.pdf  
     - icon: mailbox
       text: Email
-      href: mailto:YOUR_EMAIL@geneseo.edu
+      href: mailto:sag18@geneseo.edu
 
 ---
 
 
-Finley Malloc majors in Data Analytics at SUNY Geneseo. When not working on data analytics, Finley enjoys spending time unicycling and playing with her pet iguana.
+Sarah Grimaldi majors in accounting at SUNY Geneseo. When Sarah is not in class, 
+she enjoys working out and hanging out with friends. 
 
 ## Education
 
 State University of New York at Geneseo | Geneseo, NY <br>
-B.S. in Data Analytics | Aug 2022 - May 2026 <br>
-Minor in Business Administration 
+B.S. in Accounting | Aug 2022 - May 2026 <br>
+ 
 
 ## Experience
 
-Starbucks Analytics | Data Analyst Intern | May 2024 - Aug 2024
+Dining Server | Oct 2020 - Dec 2023 <br>
+Hostess | Nov 2023 - Dec 2023 <br>
+
 
 
