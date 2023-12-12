@@ -1,0 +1,321 @@
+# SUNY Geneseo, Fall 2023
+# DANL 200: Introduction to Data Analytics
+# Homework Assignment 4
+
+# Instructor: Byeong-Hak Choe
+# Student Name: Sarah Grimaldi
+# Student ID: 00805186
+
+# List of students whom you work with:
+# 
+#
+# ... 
+
+# List of tutors and/or TA whom you work with:
+# 
+#
+# ... 
+
+# List of AI tools (e.g. ChatGPT, Bard, etc.) you use:
+# 
+#
+# ... 
+
+
+# Loading R packages ------------------------------------------------------
+
+library(tidyverse)
+library(skimr)
+
+
+# Question 1. Working with NYC Restaurant Inspection Data ---------------
+
+# For Question 1, run the following R command to read the CSV file, 
+# `spotify_all.csv` as data.frame, `spotify_all`:
+
+
+
+spotify_all <- read_csv('https://bcdanl.github.io/data/spotify_all.csv')
+
+# The data.frame `spotify_all` includes information about Spotify users' playlists
+
+# Variable Description for spotify_all ---------------------------------------
+
+# -   `pid`: playlist ID; unique ID for playlist
+# -   `playlist_name`: a name of playlist
+# -   `pos`: a position of the track within a playlist (zero-based)
+# -   `artist_name`: name of the track's primary artist
+# -   `track_name`: name of the track
+# -   `duration_ms`: duration of the track in milliseconds
+# -   `album_name`: name of the track's album
+
+
+
+# Q1a --------------------------------------------------------------
+# - Find the ten most popular song.
+#   - A value of a song is defined as a combination of a `artist_name` value and a `track_name` value. 
+#   - Who are artists for those ten most popular song?
+
+
+# Answer for Q1a
+
+Q1a_topsongs <- spotify_all %>%
+  group_by(artist_name, track_name) %>%
+  summarize(popularity = n()) %>%
+  arrange(desc(popularity)) %>%
+  top_n(10)
+head(Q1a_topsongs,10)
+
+# 1 One Dance by Drake                                 
+# 2 HUMBLE. by Kendrick Lamar                                    
+# 3 TCloser by the Chainsmokers                                   
+# 4 Broccoli (feat. Lil Yachty) by DRAM              
+# 5 Congratulations by Post Malone                           
+# 6 Bad and Boujee (feat. Lil Uzi Vert) by Migos       
+# 7 iSpy (feat. Lil Yachty) by KYLE                   
+# 8 XO TOUR Llif3 By Lil Uzi Vert                              
+# 9 Caroline by Amine                                 
+# 10 Location by Khalid                                  
+
+# Q1b --------------------------------------------------------------
+# - Find the five most popular artist in terms of the number of occurrences 
+# in the data.frame, `spotify_all`.
+# - What is the most popular song for each of the five most popular artist?
+
+# Answer for Q1b
+
+top_artists <- spotify_all %>%
+  group_by(artist_name) %>%
+  summarize(total_occurrences = n()) %>%
+  arrange(desc(total_occurrences)) %>%
+  top_n(5)
+head(top_artists,5)
+
+# Drake, Kanye West, Kendrick Lamar, Rihanna, The Weeknd
+
+top_artists_songs <- spotify_all %>%
+  filter(artist_name %in% top_artists$artist_name) %>%
+  group_by(artist_name, track_name) %>%
+  summarize(popularity = n(), .groups = 'drop') %>%
+  arrange(desc(popularity)) %>%
+  group_by(artist_name) %>%
+  slice(1)
+head(top_artists_songs, 5)
+
+# 1 One Dance by Drake
+# 2 Gold Digger by Kanye West
+# 3 HUMBLE by Kendrick Lamar
+# 4 Needed Me by Rihana
+# Starboy by the Weeknd
+
+# Q1c --------------------------------------------------------------
+# Provide both (1) ggplot codes and (2) a couple of sentences 
+# to describe the relationship between `pos` and the ten most popular artists.
+
+library(ggplot2)
+# Answer for Q1c
+
+top_artists_ten <- spotify_all %>%
+  group_by(artist_name) %>%
+  summarize(pos = n()) %>%
+  arrange(desc(pos)) %>%
+  top_n(10)
+head(top_artists,10)
+
+ggplot(data = top_artists_ten) +
+  geom_col(mapping = aes(x = artist_name, y = pos, fill = 'color'))
+
+# Drake more than doubles the amount of `pos` between all of the artists. 
+# The rest of the 10 came in pretty evenly
+
+
+# Q1d --------------------------------------------------------------
+# Create the data.frame with `pid`-`artist` level of observations 
+# with the following four variables:
+
+# -   `pid`: playlist id
+# -   `playlist_name`: name of playlist
+# -   `artist`: name of the track's primary artist, which appears only once within a playlist
+# -   `n_artist`: number of occurrences of artist within a playlist
+
+library(dplyr)
+# Answer for Q1d
+
+
+playlist_artist_obs <- spotify_all %>%
+  group_by(pid, playlist_name, artist_name) %>%
+  summarise(n_artist_name = n(), .groups = "drop")
+
+
+
+
+# Question 2. Working with Beer Market Data ---------------
+
+# For Question 2, run the following R command to read the CSV file, 
+# `beer_markets.csv` as data.frame, `beer_mkts`:
+
+beer_mkts <- read_csv('https://bcdanl.github.io/data/beer_markets.csv')
+
+## Variable Description
+# - `hh`: an identifier of the household;
+# - `X_purchase_desc`: details on the purchased item;
+# - `quantity`: the number of items purchased;
+# - `brand`: Bud Light, Busch Light, Coors Light, Miller Lite, or Natural Light;
+# - `dollar_spent`: total dollar value of purchase;
+# - `beer_floz`: total volume of beer, in fluid ounces;
+# - `price_per_floz`: price per fl.oz. (i.e., beer spent/beer floz);
+# - `container`: the type of container;
+# - `promo`: Whether the item was promoted (coupon or otherwise);
+# - `market`: Scan-track market (or state if rural);
+# - demographic data, including gender, marital status, household income, class of work, race, education, age, the size of household, and whether or not the household has a microwave or a dishwasher.
+
+
+
+# Q2a --------------------------------------------------------------
+# - Find the top 5 markets in terms of the total `beer_floz`.
+# - Find the top 5 markets in terms of the total `beer_floz` of *BUD LIGHT*.
+# - Find the top 5 markets in terms of the total `beer_floz` of *BUSCH LIGHT*.
+# - Find the top 5 markets in terms of the total `beer_floz` of *COORS LIGHT*.
+# - Find the top 5 markets in terms of the total `beer_floz` of *MILLER LITE*.
+# - Find the top 5 markets in terms of the total `beer_floz` of *NATURAL LIGHT*.
+
+# Answer for Q2a
+
+top_markets_total <- beer_mkts %>%
+  group_by(market) %>%
+  summarise(total_beer_floz = sum(beer_floz)) %>%
+  arrange(desc(total_beer_floz)) %>%
+  head(5)
+
+# TAMPA, PHOENIX, MIAMI, SAN ANTONIO, CHICAGO
+
+top_markets_bud_light <- beer_mkts %>%
+  filter(brand == "BUD LIGHT") %>%
+  group_by(market) %>%
+  summarise(total_beer_floz = sum(beer_floz)) %>%
+  arrange(desc(total_beer_floz)) %>%
+  head(5)
+# PHOENIX, TAMPA, MIAMI, ST. LOUIS, CHARLOTTE
+
+top_markets_busch_light <- beer_mkts %>%
+  filter(brand == "BUSCH LIGHT") %>%
+  group_by(market) %>%
+  summarise(total_beer_floz = sum(beer_floz)) %>%
+  arrange(desc(total_beer_floz)) %>%
+  head(5)
+
+# RURAL IOWA, HOUSTON, CHICAGO, TAMPA, MINNEAPOLIS
+
+top_markets_coors_light <- beer_mkts %>%
+  filter(brand == "COORS LIGHT") %>%
+  group_by(market) %>%
+  summarise(total_beer_floz = sum(beer_floz)) %>%
+  arrange(desc(total_beer_floz)) %>%
+  head(5)
+# TAMPA, RURAL TEXAS, SURBURBAN NY, DENVER, LOS ANGELES
+
+top_markets_miller_lite <- beer_mkts %>%
+  filter(brand == "MILLER LITE") %>%
+  group_by(market) %>%
+  summarise(total_beer_floz = sum(beer_floz)) %>%
+  arrange(desc(total_beer_floz)) %>%
+  head(5)
+# CHICAGO, MIAMI, SAN ANTONIO, PHOENIX, RURAL WISCONSIN
+
+top_markets_natural_light <- beer_mkts %>%
+  filter(brand == "NATURAL LIGHT") %>%
+  group_by(market) %>%
+  summarise(total_beer_floz = sum(beer_floz)) %>%
+  arrange(desc(total_beer_floz)) %>%
+  head(5)
+# TAMPA, SAN ANTONIO, DALLAS, DETROIT, LOS ANGELES
+
+
+
+# Q2b --------------------------------------------------------------
+# - For households that purchased *BUD LIGHT* at least once, 
+#     what fraction of households did purchase only *BUD LIGHT*?
+# - For households that purchased *BUSCH LIGHT* at least once, 
+#     what fraction of households did purchase only *BUSCH LIGHT*?
+# - For households that purchased *COORS LIGHT* at least once, 
+#     what fraction of households did purchase only *COORS LIGHT*?
+# - For households that purchased *MILLER LITE* at least once, 
+#     what fraction of households did purchase only *MILLER LITE*?
+# - For households that purchased *NATURAL LIGHT* at least once, 
+#     what fraction of households did purchase only *NATURAL LIGHT*?
+
+# - Which beer brand does have the largest proportion of such loyal consumers?
+
+# Answer for Q2b
+
+fraction_bud_light <- beer_mkts %>%
+  group_by(hh) %>%
+  filter("BUD LIGHT" %in% brand) %>%
+  summarise(only_bud_light = all(brand == "BUD LIGHT")) %>%
+  summarise(fraction = sum(only_bud_light) / n())
+# 0.6600816
+
+fraction_busch_light <- beer_mkts %>%
+  group_by(hh) %>%
+  filter("BUSCH LIGHT" %in% brand) %>%
+  summarise(only_busch_light = all(brand == "BUSCH LIGHT")) %>%
+  summarise(fraction = sum(only_busch_light) / n())
+# 0.472973
+
+fraction_coors_light <- beer_mkts %>%
+  group_by(hh) %>%
+  filter("COORS LIGHT" %in% brand) %>%
+  summarise(only_coors_light = all(brand == "COORS LIGHT")) %>%
+  summarise(fraction = sum(only_coors_light) / n())
+# 0.6390805
+
+fraction_miller_lite <- beer_mkts %>%
+  group_by(hh) %>%
+  filter("MILLER LITE" %in% brand) %>%
+  summarise(only_miller_lite = all(brand == "MILLER LITE")) %>%
+  summarise(fraction = sum(only_miller_lite) / n())
+# 0.6312989
+
+fraction_natural_light <- beer_mkts %>%
+  group_by(hh) %>%
+  filter("NATURAL LIGHT" %in% brand) %>%
+  summarise(only_natural_light = all(brand == "NATURAL LIGHT")) %>%
+  summarise(fraction = sum(only_natural_light) / n())
+# 0.5096234
+
+
+loyalty_fractions <- data.frame(
+  brand = c("BUD LIGHT", "BUSCH LIGHT", "COORS LIGHT", "MILLER LITE", "NATURAL LIGHT"),
+  fraction = c(fraction_bud_light$fraction, fraction_busch_light$fraction, 
+               fraction_coors_light$fraction, fraction_miller_lite$fraction, 
+               fraction_natural_light$fraction))
+
+max_loyalty_brand <- loyalty_fractions %>%
+  filter(fraction == max(fraction))
+
+# BUD LIGHT 0.6600816
+
+
+
+# Q2c --------------------------------------------------------------
+# - For each household, calculate the number of beer transactions. 
+# - For each household, calculate the proportion of each beer brand choice.
+
+# Answer for Q2c
+
+beer_transactions <- beer_mkts %>%
+  group_by(hh) %>%
+  summarise(num_transactions = n())
+
+
+brand_proportions <- beer_mkts %>%
+  group_by(hh, brand) %>%
+  summarise(brand_count = n()) %>%
+  group_by(hh) %>%
+  mutate(brand_proportion = brand_count / sum(brand_count))
+
+
+
+
+# Blank ------------------------------------------------------------------
+# This section is left intentionally blank.
