@@ -1,7 +1,0 @@
-"0","ggplot(Q1c) +
-  geom_histogram(aes(x = pos), binwidth = 1) + 
-  facet_grid(fct_reorder(artist_name, artist_ranking) ~ .  , switch = ""y"") +
-  theme(strip.text.y.left = element_text(angle = 0))
-"
-"2","Error: object 'Q1c' not found
-"

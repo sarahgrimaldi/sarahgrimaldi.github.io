@@ -1,0 +1,61 @@
+---
+title: "NYC Restaurant Inspections"
+author: "Sarah Grimaldi"
+date: "2023-10-30"
+categories: [news, code, analysis]
+image: "NYC restaurant.png"
+---
+
+This is a post with executable code with no space in the folder name.
+
+```{r}
+1 + 1
+
+restaurant <- read_csv(
+"C:/Users/sarah/Downloads/DOHMH_NYC_Restaurant_Inspection.csv")
+```
+
+
+
+How the distribution of SCORE varies by GRADE and CRITICAL FLAG.
+
+```{r}
+ggplot(data=restaurant) +
+  geom_histogram(mapping = aes(x=SCORE), binwidth = 2)+
+  facet_wrap(restaurant$'CRITICAL FLAG'~GRADE, scales= 'free_y')
+
+```
+
+For the 10 most common CUISINE DESCRIPTION values, these are the CUISINE DESCRIPTION values that have the highest proportion of GRADE A.
+
+```{r}
+
+q1e<- restaurant %>%
+  rename(cuisine='CUISINE DESCRIPTION') %>%
+  group_by(cuisine)%>%
+  count() %>%
+  arrange(-n)
+head(q1e, 10)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+![](image.jpg)

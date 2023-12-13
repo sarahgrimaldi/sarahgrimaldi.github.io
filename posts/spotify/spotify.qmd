@@ -2,7 +2,7 @@
 title: "Spotify"
 author: "Sarah Grimaldi"
 date: "2023-10-30"
-categories: [starwars, code, analysis]
+categories: [spotify, code, analysis]
 image: "Screenshot 2023-12-12 133105.png"
 
 execute: 
@@ -36,7 +36,7 @@ theme_set(theme_ipsum()+
 Let's analyze the `spotify` data:
 
 ```{r}
-spotify_all <- read_csv("https://bcdanl.github.io/data/spotify_all.csv")
+spotify_all <- read_csv("C:/Users/sarah/Downloads/spotify_all.csv")
 ```
 
 The top 10 spotify artists
@@ -56,8 +56,17 @@ ggplot(Q1c) +
   facet_grid(fct_reorder(artist_name, artist_ranking) ~ .  , switch = "y") +
   theme(strip.text.y.left = element_text(angle = 0))
 ```
+The ten most popular songs on spotify
 
 
+```{r}
+Q1a_topsongs <- spotify_all %>%
+  group_by(artist_name, track_name) %>%
+  summarize(popularity = n()) %>%
+  arrange(desc(popularity)) %>%
+  top_n(10)
+head(Q1a_topsongs,10)
+```
 
 ```{r}
 
