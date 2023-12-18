@@ -1,0 +1,4 @@
+"0","nfl_data_clean <- na.omit(nfl_data)
+"
+"2","Error: object 'nfl_data' not found
+"

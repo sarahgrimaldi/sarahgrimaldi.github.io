@@ -1,0 +1,4 @@
+"0","NFL2022_stuffs <- read_csv('https://bcdanl.github.io/data/NFL2022_stuffs.csv')"
+"2","Error in read_csv(""https://bcdanl.github.io/data/NFL2022_stuffs.csv"") : 
+  could not find function ""read_csv""
+"

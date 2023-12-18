@@ -1,0 +1,13 @@
+
+This is the data for NFL in 2022
+```{r}
+NFL2022_stuffs <- read_csv('https://bcdanl.github.io/data/NFL2022_stuffs.csv')
+
+```
+
+
+
+
+
+
+

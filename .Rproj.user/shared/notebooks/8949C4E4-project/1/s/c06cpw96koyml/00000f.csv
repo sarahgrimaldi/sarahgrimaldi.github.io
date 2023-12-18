@@ -1,0 +1,4 @@
+"0","starwars_species <- starwars %>% subset(species == ""Human"" | species == ""Droid"" | species == ""Ewok"")"
+"0","# plot the distributions"
+"0","a <- ggplot(starwars_species, aes(species, mass))"
+"0","a + geom_boxplot()"

@@ -1,0 +1,212 @@
+# SUNY Geneseo, Fall 2023
+# DANL 200: Introduction to Data Analytics
+# Homework Assignment 2
+
+# Instructor: Byeong-Hak Choe
+# Student Name: Sarah Grimaldi
+# Student ID: 00805186
+
+# List of students whom you work with:
+  # 
+  #
+  # ... 
+
+# List of tutors and/or TA whom you work with:
+  # 
+  #
+  # ... 
+
+# List of AI tools (e.g. ChatGPT, Bard, etc.) you use:
+  # 
+  #
+  # ... 
+
+
+# Loading R packages ------------------------------------------------------
+
+library(tidyverse)
+library(skimr)
+
+
+# Question 1. Working with Customer Data with Health Insurance ---------------
+
+# Read the data file, custdata_rev.csv, 
+# as the data.frame object with the name, 
+# health_cust:
+
+health_cust <- read_csv(
+  'https://bcdanl.github.io/data/custdata_rev.csv')
+
+# Variable Description for health_cust ---------------------------------------
+
+# The following describes the variables 
+# in the `health_cust` data.frame.
+
+# custid: ID of customer
+# sex: Sex
+# is_employed: Employment status
+  # NA: Unknown or not applicable
+  # TRUE: Employed
+  # FALSE: Unemployed
+# income: Income (in $)
+# marital_status: Marital status
+# housing_type: Housing type
+# recent_move: 
+  # TRUE: Recently moved
+  # FALSE: Not recently moved
+# age: Age
+# state_of_res: State of residence
+# gas_usage: Gas usage
+  # NA: Unknown or not applicable
+  # 001: Included in rent or condo fee
+  # 002: Included in electricity payment
+  # 003: No charge or gas not used
+  # 004-999: $4 to $999 (rounded and top-coded)
+# health_ins: Health insuarance status
+  # TRUE: customer with health insuarance 
+  # FALSE: customer without health insuarance 
+
+
+# Q1a --------------------------------------------------------------
+# Report summary statistics including a mean value 
+# for each logical variable in health_cust.
+
+# Answer for Q1a
+
+summary(health_cust$income)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# -6900   10700   26200   41764   51700 1257000 
+
+summary(health_cust$num_vehicles)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+# 0.000   1.000   2.000   2.066   3.000   6.000    1720 
+
+summary(health_cust$age)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# 0.00   34.00   48.00   49.16   62.00  120.00
+
+summary(health_cust$gas_usage)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+# 1.00    3.00   10.00   41.17   60.00  570.00    1720
+
+
+
+# Q1b --------------------------------------------------------------
+# Use `health_cust` data.frame to create a new data.frame, `health_cust2`,
+# in which 
+# (1) `age` is greater than 0 and less than 100; and
+# (2) `income` is positive.
+
+# Answer for Q1b
+
+health_cust2 <- health_cust %>%
+  filter(age > 0, age < 100, income > 0)
+
+
+
+# Q1c --------------------------------------------------------------
+# Provide ggplot code and comments to describe 
+# the distribution of `income`.
+
+# Answer for Q1c
+
+ggplot(data = health_cust) +
+  geom_histogram(mapping = aes(x = income, alpha = .3))
+
+# the distribution of income is right skewed
+
+# Q1d --------------------------------------------------------------
+# Provide ggplot code and comments to describe 
+# the distribution of `marital_status`.
+
+# Answer for Q1d
+
+ggplot(data = health_cust) +
+  geom_bar(mapping = aes(x = marital_status))
+
+# most of the people are married 
+
+# Load the ggplot2 package if it's not already loaded
+# install.packages("ggplot2")
+
+library(ggplot2)
+
+# Create a bar chart of the marital_status distribution
+
+# Did it in question above
+
+# Q1e --------------------------------------------------------------
+# Suppose you randomly pick one customer's observation 
+# from each state in data.frame `health_cust`.
+
+# Use ggplot code to find:
+# (1) in which state a customer is most likely to have a health insurance; and
+# (2) in which state a customer is least likely to have a health insurance.
+
+# Answer for Q1e
+
+ggplot(data = health_cust) +
+  geom_bar(mapping = aes(x = state, health_ins = "TRUE"))
+
+
+
+# Q1f --------------------------------------------------------------
+# Provide ggplot code and comments to describe 
+# the relationship between `age` and `income`.
+
+# Answer for Q1f
+
+ggplot(data = health_cust) +
+  geom_point(mapping = aes(x = age, y = income))
+
+# The age and income has a positive correlation until about age 55, 
+# then it has a negative correlation. It is a parabola-like figure. 
+
+
+# Q1g --------------------------------------------------------------
+# Provide ggplot code and comments to describe 
+# the relationship between `age` and `health_ins`.
+
+# Answer for Q1g
+
+ggplot(data = health_cust) +
+  geom_boxplot(mapping = aes(y = age, x = health_ins))
+
+# Average age of people who don't have health insurance is around 50.
+# The average age of people who do have health insurance is around 38.
+
+# Q1h --------------------------------------------------------------
+# Provide ggplot code and comments to describe 
+# the relationship between `marital_status` and `health_ins`.
+
+# Answer for Q1h
+
+ggplot(health_cust, aes(x = marital_status, fill = health_ins)) +
+  geom_bar(position = "fill")
+
+# If you are never married it is more likely that you have health insurance
+
+# Q1i --------------------------------------------------------------
+# Provide ggplot code and comments to describe 
+# the relationship between `marital_status` and `housing_type`.
+
+# Answer for Qi
+
+ggplot(health_cust, aes(x = marital_status, fill = housing_type)) +
+  geom_bar(position = "fill")
+
+# If a person is never married or divorced/separated it is more likely that 
+# they rented a place. If a person is married or widowed, it is more likely 
+# that they are a homeowner of some sort. 
+
+# Blank ------------------------------------------------------------------
+# This section is left intentionally blank.
+
+health_cust_sum <- skim(health_cust)
+
+q1a <- health_cust_sum[health_cust_sum$skim_type == 'logical', 
+                       c('skim_variable', 
+                         'n_missing', 'complete_rate',
+                         'logical.mean', 'logical.count')]
+ggplot(health_cust2, aes(x = income)) +
+  geom_histogram()

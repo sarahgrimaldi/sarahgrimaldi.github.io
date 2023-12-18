@@ -1,0 +1,153 @@
+library(tidyverse)
+library(skimr)
+library(dyplr)
+
+Link to my GihtHub repository
+https://github.com/sarahgrimaldi/sarahgrimaldi.github.io 
+
+Answers for Question 2.
+
+```{r}
+NFL2022_stuffs <- read_csv('https://bcdanl.github.io/data/NFL2022_stuffs.csv')
+```
+
+
+In data.frame, NFL2022_stuffs, remove observations for which values of posteam is missing.
+
+```{r}
+
+nfl_data_clean <- na.omit(NFL2022_stuffs)
+
+```
+
+library(dplyr)
+
+Summarize the mean value of pass for each posteam when all the following conditions hold:
+wp is greater than 20% and less than 75%;
+down is less than or equal to 2; and
+half_seconds_remaining is greater than 120.
+
+```{r}
+library(dplyr)
+
+# Filter data based on conditions
+filtered_data <- NFL2022_stuffs %>%
+  filter(wp > 0.2 & wp < 0.75 & down <= 2 & half_seconds_remaining > 120)
+
+# Summarize the mean value of pass for each posteam
+summary_by_posteam <- filtered_data %>%
+  group_by(posteam) %>%
+  summarise(mean_pass = mean(pass, na.rm = TRUE))
+
+# Print the summary
+print(summary_by_posteam)
+
+```
+
+Provide both (1) a ggplot code with geom_point() using the resulting data.frame in Q2b and (2) a simple comments to describe the mean value of pass for each posteam.
+In the ggplot, reorder the posteam categories based on the mean value of pass in ascending or in descending order.
+
+```{r}
+library(ggplot2)
+
+# Reorder posteam based on mean_pass in ascending order
+summary_by_posteam <- summary_by_posteam %>%
+  arrange(mean_pass)
+
+# Create ggplot with geom_point
+ggplot(summary_by_posteam, aes(x = reorder(posteam, mean_pass), y = mean_pass)) +
+  geom_point() +
+  labs(title = "Mean Value of pass for Each posteam",
+       x = "posteam",
+       y = "Mean pass value")
+
+```
+
+Provide both (1) a single ggplot and (2) a simple comment to describe the NFL weekly trend of weekly mean value of epa for each of the following two passers,
+"J.Allen"
+"P.Mahomes"
+
+
+```{r}
+library(dplyr)
+
+library(ggplot2)
+
+# Assuming NFL2022_stuffs_EPA is already loaded and has the necessary structure
+
+# Filter data for the specified passers
+filtered_data <- NFL2022_stuffs_EPA %>%
+  filter(passer %in% c("J.Allen", "P.Mahomes"))
+
+# Create ggplot with geom_line for weekly trend
+ggplot(filtered_data, aes(x = week, y = epa, color = passer)) +
+  geom_line() +
+  labs(title = "NFL Weekly Trend of Mean EPA for Selected Passers",
+       x = "Week",
+       y = "Mean EPA",
+       color = "Passer") 
+
+
+
+```
+
+Calculate the difference between the mean value of epa for "J.Allen" the mean value of epa for "P.Mahomes" for each value of week.
+
+```{r}
+library(dplyr)
+
+# Assuming NFL2022_stuffs_EPA is already loaded and has the necessary structure
+
+# Filter data for the specified passers
+filtered_data <- NFL2022_stuffs_EPA %>%
+  filter(passer %in% c("J.Allen", "P.Mahomes"))
+
+# Calculate the mean epa for each passer and week
+mean_epa_by_week <- filtered_data %>%
+  group_by(week, passer) %>%
+  summarise(mean_epa = mean(epa, na.rm = TRUE))
+
+# Pivot the data to have passers as columns
+mean_epa_wide <- pivot_wider(mean_epa_by_week, names_from = passer, values_from = mean_epa)
+
+# Calculate the difference
+mean_epa_wide$epa_difference <- mean_epa_wide$`J.Allen` - mean_epa_wide$`P.Mahomes`
+
+```
+
+Summarize the resulting data.frame in Q2d, with the following four variables:
+
+posteam: String abbreviation for the team with possession.
+passer: Name of the player who passed a ball to a receiver by initially taking a three-step drop, and backpedaling into the pocket to make a pass. (Mostly, they are quarterbacks.)
+mean_epa: Mean value of epa in 2022 for each passer
+n_pass: Number of observations for each passer
+Then find the top 10 NFL passers in 2022 in terms of the mean value of epa, conditioning that n_pass must be greater than or equal to the third quantile level of n_pass.
+
+
+```{r}
+library(dplyr)
+
+# Assuming mean_epa_wide is the resulting data.frame from Q2d
+
+summary_data <- mean_epa_wide %>%
+  gather(key = passer, value = mean_epa, -week) %>%
+  group_by(posteam, passer) %>%
+  summarise(mean_epa = mean(mean_epa, na.rm = TRUE),
+            n_pass = sum(!is.na(mean_epa)))
+
+q3_n_pass <- summary_data %>%
+  pull(n_pass) %>%
+  quantile(0.75)
+
+# Filter top 10 passers with n_pass greater than or equal to q3_n_pass
+top_passers <- summary_data %>%
+  filter(n_pass >= q3_n_pass) %>%
+  arrange(desc(mean_epa)) %>%
+  slice_head(n = 10)
+
+# Print the summary data and top 10 passers
+print(summary_data)
+print(top_passers)
+
+```
+
